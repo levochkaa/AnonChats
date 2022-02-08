@@ -8,6 +8,7 @@ struct AddChatView: View {
     @State var maxN = 0
     @State private var maxNVars = [2, 3]
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var viewModel: Chats
 
     var body: some View {
         NavigationView {
@@ -24,6 +25,7 @@ struct AddChatView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
+                        viewModel.createChat(title: name, topic: topic, maxUsers: maxNVars[maxN], handler: {})
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Create")
