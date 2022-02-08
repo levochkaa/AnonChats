@@ -3,11 +3,21 @@ import SwiftUI
 
 struct SettingsView: View {
 
-    @State var nickname = "Nickname"
+    @State var username = "Username"
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        VStack {
-            TextField("Nickname", text: $nickname)
+        VStack(alignment: .center, spacing: 0) {
+            Spacer()
+            Text("Your username:")
+                .font(.largeTitle)
+                .padding(.bottom)
+            TextField("Username", text: $username)
+                .multilineTextAlignment(.center)
+                .padding(.vertical, 10)
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                .padding(.horizontal, 30)
+            Spacer()
             Button(action: {
                 UserDefaults.standard.set(false, forKey: "status")
                 NotificationCenter.default.post(name: NSNotification.Name("statusChange"), object: nil)
@@ -15,7 +25,11 @@ struct SettingsView: View {
                 Text("Logout")
                     .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .foregroundColor(.red)
+                    .padding(.vertical)
+                    .padding(.horizontal, 150)
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(.red, lineWidth: 2))
             }
+            .padding(.bottom, 70)
         }
     }
 }
