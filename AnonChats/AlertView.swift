@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct AlertView: View {
@@ -27,7 +26,8 @@ struct AlertView: View {
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .padding(.horizontal, 50)
                         .padding(.vertical, 10)
-                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                        .overlay(RoundedRectangle(cornerRadius: 20)
+                                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
                 }
             }
             .frame(width: UIScreen.main.bounds.width - 70)

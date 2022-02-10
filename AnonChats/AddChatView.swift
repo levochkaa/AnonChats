@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct AddChatView: View {
@@ -32,7 +31,11 @@ struct AddChatView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { presentationMode.wrappedValue.dismiss() }) { Text("Cancel") }
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Cancel")
+                    }
                 }
             }
         }

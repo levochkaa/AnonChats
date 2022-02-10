@@ -1,8 +1,7 @@
-
 import SwiftUI
 import Combine
 
-fileprivate struct UITextViewWrapper: UIViewRepresentable {
+private struct UITextViewWrapper: UIViewRepresentable {
     typealias UIViewType = UITextView
 
     @Binding var text: String
@@ -85,7 +84,9 @@ struct MultilineTextField: View {
 
     @Binding private var text: String
     private var internalText: Binding<String> {
-        Binding<String>(get: { self.text } ) {
+        Binding<String>(get: {
+            self.text
+        }) {
             self.text = $0
             self.showingPlaceholder = $0.isEmpty
         }

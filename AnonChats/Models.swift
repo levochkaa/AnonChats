@@ -1,4 +1,3 @@
-
 import SwiftUI
 import Firebase
 import FirebaseAuth
@@ -34,12 +33,26 @@ struct Chat: Codable, Identifiable {
 
 class Chats: ObservableObject {
     @Published var chats = [Chat]()
-    private let db = Firestore.firestore()
+    @Published var query = 1
+    private let firestore = Firestore.firestore()
     private let user = Auth.auth().currentUser
+
+    func getSortedFilteredChats(query: String, sortedBy: Int) -> [Chat] {
+        if query == "" && sortedBy == 1 {
+            return chats
+        } else if query == "" && sortedBy != 1 {
+            return chats.filter { $0.maxUsers == sortedBy }
+        } else if query != "" && sortedBy == 1 {
+            return chats.filter { $0.title.lowercased().contains(query.lowercased()) }
+        } else {
+            let sortedChats = chats.filter { $0.title.lowercased().contains(query.lowercased()) }
+            return sortedChats.filter { $0.maxUsers == sortedBy }
+        }
+    }
 
     func fetchData() {
         if user != nil {
-            db.collection("chats").addSnapshotListener({(snapshot, error) in
+            firestore.collection("chats").addSnapshotListener({(snapshot, _) in
                 guard let documents = snapshot?.documents else {
                     print("no docs")
                     return
@@ -52,7 +65,8 @@ class Chats: ObservableObject {
                     let maxUsers = data["maxUsers"] as? Int ?? -1
                     let users = data["users"] as? [String] ?? []
                     let messages = data["messages"] as? [Message] ?? []
-                    return Chat(id: uid, title: title, topic: topic, maxUsers: maxUsers, users: users, messages: messages)
+                    return Chat(id: uid, title: title, topic: topic,
+                                maxUsers: maxUsers, users: users, messages: messages)
                 })
             })
         }
@@ -60,7 +74,7 @@ class Chats: ObservableObject {
 
     func createChat(title: String, topic: String, maxUsers: Int, handler: @escaping () -> Void) {
         if user != nil {
-            db.collection("chats").addDocument(data: [
+            firestore.collection("chats").addDocument(data: [
                 "uid": UUID().uuidString,
                 "title": title,
                 "topic": topic,
@@ -79,16 +93,42 @@ class Chats: ObservableObject {
 
     func joinChat(id: String, handler: @escaping () -> Void) {
         if user != nil {
-            db.collection("chats").whereField("uid", isEqualTo: id).getDocuments() { (snapshot, error) in
+            firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments { (snapshot, error) in
                 if let error = error {
                     print("error getting docs \(error)")
                 } else {
                     for document in snapshot!.documents {
-                        self.db.collection("chats").document(document.documentID).updateData(["users": FieldValue.arrayUnion([self.user!.uid])])
+                        self.firestore.collection("chats").document(document.documentID).updateData([
+                            "users": FieldValue.arrayUnion([self.user!.uid])
+                        ])
                         handler()
                     }
                 }
             }
+        }
+    }
+}
+
+class FirebaseSession: ObservableObject {
+    let auth = Auth.auth()
+
+    func signInWithEmail(email: String, password: String, completion: @escaping (Bool, String) -> Void) {
+        auth.signIn(withEmail: email, password: password) { (result, error) in
+            if let error = error {
+                completion(false, (error.localizedDescription))
+                return
+            }
+            completion(true, (result?.user.email)!)
+        }
+    }
+
+    func signUpWithEmail(email: String, password: String, completion: @escaping (Bool, String) -> Void) {
+        auth.createUser(withEmail: email, password: password) { (result, error) in
+            if let error = error {
+                completion(false, (error.localizedDescription))
+                return
+            }
+            completion(true, (result?.user.email)!)
         }
     }
 }

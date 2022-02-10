@@ -1,7 +1,4 @@
-
 import SwiftUI
-import Firebase
-import FirebaseAuth
 
 struct AuthorizationView: View {
 
@@ -10,6 +7,7 @@ struct AuthorizationView: View {
     @State private var email = ""
     @State private var pass = ""
     @State private var forgotPass = false
+    @EnvironmentObject var firebase: FirebaseSession
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
@@ -24,16 +22,18 @@ struct AuthorizationView: View {
                     .font(.system(size: 25, weight: .semibold, design: .rounded))
                     .padding(.vertical, 15)
                     .multilineTextAlignment(.center)
-                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                    .overlay(RoundedRectangle(cornerRadius: 20)
+                                .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
                     .padding(.horizontal, 50)
                 SecureField("Password", text: $pass)
                     .font(.system(size: 25, weight: .semibold, design: .rounded))
                     .padding(.vertical, 15)
                     .multilineTextAlignment(.center)
-                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                    .overlay(RoundedRectangle(cornerRadius: 20)
+                                .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
                     .padding(.horizontal, 50)
                 Button(action: {
-                    signInWithEmail(email: email, password: pass) { (verified, status) in
+                    firebase.signInWithEmail(email: email, password: pass) { (verified, status) in
                         if !verified {
                             self.message = status
                             self.show.toggle()
@@ -49,16 +49,26 @@ struct AuthorizationView: View {
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .multilineTextAlignment(.center)
                         .padding(15)
-                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                        .overlay(RoundedRectangle(cornerRadius: 20)
+                                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
                 }
                 Spacer()
-                Button(action: { forgotPass.toggle() }) {
+                Button(action: {
+                    forgotPass.toggle()
+                }) {
                     Text("Forgot password?")
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
-                } .sheet(isPresented: $forgotPass) { ForgotPassView() }
+                } .sheet(isPresented: $forgotPass) {
+                    ForgotPassView()
+                        .environmentObject(firebase)
+                }
             }
-            if show { withAnimation { AlertView(message: self.message, show: self.$show) } }
+            if show {
+                withAnimation {
+                    AlertView(message: self.message, show: self.$show)
+                }
+            }
         }
     }
 }
@@ -67,6 +77,7 @@ struct ForgotPassView: View {
 
     @State private var email = ""
     @State private var show = false
+    @EnvironmentObject var firebase: FirebaseSession
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.presentationMode) var presentationMode
 
@@ -77,11 +88,12 @@ struct ForgotPassView: View {
                 TextField("E-mail", text: $email)
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 15)
-                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                    .overlay(RoundedRectangle(cornerRadius: 20)
+                                .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
                     .padding(.horizontal, 50)
                     .font(.system(size: 25, weight: .semibold, design: .rounded))
                 Button(action: {
-                    Auth.auth().sendPasswordReset(withEmail: email)
+                    firebase.auth.sendPasswordReset(withEmail: email)
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Submit")
@@ -89,25 +101,10 @@ struct ForgotPassView: View {
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                         .multilineTextAlignment(.center)
                         .padding(15)
-                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
+                        .overlay(RoundedRectangle(cornerRadius: 20)
+                                    .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
                 }
             }
         }
-    }
-}
-
-func signInWithEmail(email: String, password: String, completion: @escaping (Bool, String) -> Void) {
-    Auth.auth().signIn(withEmail: email, password: password) { (res, err) in
-        if err != nil {
-            completion(false, (err?.localizedDescription) as! String)
-            return
-        }
-        completion(true, (res?.user.email)!)
-    }
-}
-
-struct AuthorizationView_Previews: PreviewProvider {
-    static var previews: some View {
-        AuthorizationView()
     }
 }

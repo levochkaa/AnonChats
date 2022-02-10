@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct HomeView: View {
@@ -6,10 +5,13 @@ struct HomeView: View {
     @State var selectedTab: Tabs = .chats
     @State private var showAddChatView = false
     @ObservedObject var viewModel = Chats()
+    @ObservedObject var firebase = FirebaseSession()
 
     init() {
         let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
         appearance.shadowColor = .none
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().standardAppearance = appearance
         viewModel.fetchData()
     }
@@ -18,7 +20,7 @@ struct HomeView: View {
         NavigationView {
             VStack {
                 switch selectedTab {
-                    case .favourite:
+                case .favourite:
                         FavouriteView()
                             .navigationTitle("Favourite")
                             .toolbar {
@@ -26,53 +28,34 @@ struct HomeView: View {
                                     EditButton()
                                 }
                             }
-                    case .chats:
+                case .chats:
                         ChatsView()
                             .environmentObject(viewModel)
                             .navigationTitle("Chats")
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
-                                    Button(action: { self.showAddChatView = true }) {
+                                    Button(action: {
+                                        self.showAddChatView = true
+                                    }) {
                                         Image(systemName: "plus")
-                                    } .sheet(isPresented: $showAddChatView) { AddChatView().environmentObject(viewModel) }
-                                }
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    Menu {
-                                        Button(action: {}) {
-                                            HStack {
-                                                Text("Default")
-                                                Spacer()
-                                                Image(systemName: "person.fill")
-                                            }
-                                        }
-                                        Button(action: {}) {
-                                            HStack {
-                                                Text("By 2 people")
-                                                Spacer()
-                                                Image(systemName: "person.2.fill")
-                                            }
-                                        }
-                                        Button(action: {}) {
-                                            HStack {
-                                                Text("By 3 people")
-                                                Spacer()
-                                                Image(systemName: "person.3.sequence.fill")
-                                            }
-                                        }
-                                    } label: {
-                                        Button(action: {}) {
-                                            Text("Sort")
-                                        }
+                                    } .sheet(isPresented: $showAddChatView) {
+                                        AddChatView().environmentObject(viewModel)
                                     }
                                 }
+                                ToolbarItem(placement: .navigationBarLeading) {
+                                    MenuView().environmentObject(viewModel)
+                                }
                             }
-                    case .settings:
+                case .settings:
                         SettingsView()
+                            .environmentObject(firebase)
                             .navigationTitle("Settings")
                 }
                 Spacer()
                 HStack(spacing: 100) {
-                    Button(action: { self.selectedTab = .favourite }) {
+                    Button(action: {
+                        self.selectedTab = .favourite
+                    }) {
                         VStack {
                             Image(systemName: "star.fill")
                                 .resizable()
@@ -83,7 +66,9 @@ struct HomeView: View {
                                 .foregroundColor(selectedTab == .favourite ? .accentColor : .gray)
                         }
                     }
-                    Button(action: { self.selectedTab = .chats }) {
+                    Button(action: {
+                        self.selectedTab = .chats
+                    }) {
                         VStack {
                             Image(systemName: "message.fill")
                                 .resizable()
@@ -94,7 +79,9 @@ struct HomeView: View {
                                 .foregroundColor(selectedTab == .chats ? .accentColor : .gray)
                         }
                     }
-                    Button(action: { self.selectedTab = .settings }) {
+                    Button(action: {
+                        self.selectedTab = .settings
+                    }) {
                         VStack {
                             Image(systemName: "gearshape.fill")
                                 .resizable()
@@ -109,7 +96,12 @@ struct HomeView: View {
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 50, alignment: .bottom)
                 .background(.bar)
             }
-
+            .safeAreaInset(edge: .top) {
+                VStack(spacing: 0) {
+                    Color(red: 50/255, green: 50/255, blue: 50/255, opacity: 1)
+                        .frame(height: CGFloat(1) / UIScreen.main.scale)
+                } .background(.bar)
+            }
         }
     }
 }
