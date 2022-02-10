@@ -21,6 +21,8 @@
 		DF7A856F27B05FA8008F7C96 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A856E27B05FA8008F7C96 /* Extensions.swift */; };
 		DF7A857127B0667C008F7C96 /* AddChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A857027B0667C008F7C96 /* AddChatView.swift */; };
 		DF7A857327B06975008F7C96 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A857227B06975008F7C96 /* AlertView.swift */; };
+		DF7A857627B33245008F7C96 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = DF7A857527B33245008F7C96 /* Introspect */; };
+		DF7A857927B3B8E7008F7C96 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A857827B3B8E7008F7C96 /* EditView.swift */; };
 		DF9FEC9D27B002F500905A48 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = DF9FEC9C27B002F500905A48 /* FirebaseAuth */; };
 		DF9FEC9F27B002F500905A48 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = DF9FEC9E27B002F500905A48 /* FirebaseFirestore */; };
 		DF9FECA127B002F500905A48 /* FirebaseFirestoreSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = DF9FECA027B002F500905A48 /* FirebaseFirestoreSwift-Beta */; };
@@ -46,6 +48,7 @@
 		DF7A856E27B05FA8008F7C96 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		DF7A857027B0667C008F7C96 /* AddChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChatView.swift; sourceTree = "<group>"; };
 		DF7A857227B06975008F7C96 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
+		DF7A857827B3B8E7008F7C96 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		DF9FECA227B02E9B00905A48 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		DF9FECA427B02EAB00905A48 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		DF9FECA627B0300400905A48 /* RegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
@@ -58,6 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF9FECA127B002F500905A48 /* FirebaseFirestoreSwift-Beta in Frameworks */,
+				DF7A857627B33245008F7C96 /* Introspect in Frameworks */,
 				DF9FEC9D27B002F500905A48 /* FirebaseAuth in Frameworks */,
 				DF9FEC9F27B002F500905A48 /* FirebaseFirestore in Frameworks */,
 			);
@@ -103,6 +107,7 @@
 				DF30CC7C27B001AE00D665C7 /* Preview Content */,
 				DF7A856C27B05F88008F7C96 /* Models.swift */,
 				DF7A856E27B05FA8008F7C96 /* Extensions.swift */,
+				DF7A857827B3B8E7008F7C96 /* EditView.swift */,
 			);
 			path = AnonChats;
 			sourceTree = "<group>";
@@ -125,6 +130,7 @@
 				DF30CC6F27B001AE00D665C7 /* Sources */,
 				DF30CC7027B001AE00D665C7 /* Frameworks */,
 				DF30CC7127B001AE00D665C7 /* Resources */,
+				DF7A857727B34399008F7C96 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -135,6 +141,7 @@
 				DF9FEC9C27B002F500905A48 /* FirebaseAuth */,
 				DF9FEC9E27B002F500905A48 /* FirebaseFirestore */,
 				DF9FECA027B002F500905A48 /* FirebaseFirestoreSwift-Beta */,
+				DF7A857527B33245008F7C96 /* Introspect */,
 			);
 			productName = AnonChats;
 			productReference = DF30CC7327B001AE00D665C7 /* AnonChats.app */;
@@ -166,6 +173,7 @@
 			mainGroup = DF30CC6A27B001AE00D665C7;
 			packageReferences = (
 				DF9FEC9B27B002F400905A48 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				DF7A857427B33245008F7C96 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = DF30CC7427B001AE00D665C7 /* Products */;
 			projectDirPath = "";
@@ -190,6 +198,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		DF7A857727B34399008F7C96 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#export PATH=\"$PATH:/opt/homebrew/bin\"\n#if which swiftlint >/dev/null; then\n#  swiftlint\n#fi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		DF30CC6F27B001AE00D665C7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -206,6 +234,7 @@
 				DF7A856F27B05FA8008F7C96 /* Extensions.swift in Sources */,
 				DF7A857327B06975008F7C96 /* AlertView.swift in Sources */,
 				DF30CC7927B001AE00D665C7 /* ContentView.swift in Sources */,
+				DF7A857927B3B8E7008F7C96 /* EditView.swift in Sources */,
 				DF30CC7727B001AE00D665C7 /* AnonChatsApp.swift in Sources */,
 				DF7A856927B05F3B008F7C96 /* FavouriteView.swift in Sources */,
 				DF9FECA727B0300400905A48 /* RegistrationView.swift in Sources */,
@@ -413,6 +442,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DF7A857427B33245008F7C96 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.4;
+			};
+		};
 		DF9FEC9B27B002F400905A48 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -424,6 +461,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DF7A857527B33245008F7C96 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF7A857427B33245008F7C96 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
 		DF9FEC9C27B002F500905A48 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF9FEC9B27B002F400905A48 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
