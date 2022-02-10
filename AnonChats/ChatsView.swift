@@ -1,12 +1,12 @@
-
 import SwiftUI
 
 struct ChatsView: View {
 
+    @State private var query = ""
     @EnvironmentObject var viewModel: Chats
 
     var body: some View {
-        List(viewModel.chats) { chat in
+        List(viewModel.getSortedFilteredChats(query: query, sortedBy: viewModel.query)) { chat in
             NavigationLink(destination: ChatView().environmentObject(viewModel)) {
                 HStack {
                     VStack(alignment: .leading) {
@@ -20,6 +20,12 @@ struct ChatsView: View {
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                 } .padding(.vertical, 10)
             }
-        } .listStyle(.plain)
+        }
+        .padding(.top, -10)
+        .searchable(text: $query)
+        .listStyle(.plain)
+        .refreshable {
+            viewModel.fetchData()
+        }
     }
 }
