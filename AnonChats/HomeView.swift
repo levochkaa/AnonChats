@@ -43,7 +43,7 @@ struct HomeView: View {
                             .environmentObject(firebase)
                             .environmentObject(userModel)
                             .navigationBarTitle("Settings", displayMode: .large)
-                    }
+                }
                 HStack(spacing: 110) {
                     Button(action: {
                         self.selectedTab = .favourite

@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct ChatView: View {
-
+    
     let chat: Chat
     let chats: Chats
     var rootIsActive: Binding<Bool>
@@ -10,7 +10,7 @@ struct ChatView: View {
     @FocusState var isFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel = Messages()
-
+    
     init(chat: Chat, chats: Chats, rootIsActive: Binding<Bool>) {
         self.chat = chat
         self.chats = chats
@@ -18,7 +18,7 @@ struct ChatView: View {
         self.chats.joinChat(id: chat.id)
         viewModel.fetchData(docId: chat.id)
     }
-
+    
     var body: some View {
         ZStack {
             ScrollViewReader { scrollView in

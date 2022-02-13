@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct ChatsView: View {
-
+    
     @State var isActive: Bool = false
     @State private var query = ""
     @EnvironmentObject var viewModel: Chats
-
+    
     var body: some View {
         List(viewModel.getSortedFilteredChats(query: query)) { chat in
             NavigationLink(destination: ChatView(chat: chat, chats: viewModel, rootIsActive: self.$isActive), isActive: self.$isActive) {
