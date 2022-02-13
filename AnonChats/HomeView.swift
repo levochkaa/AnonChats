@@ -20,11 +20,6 @@ struct HomeView: View {
                         FavouriteView()
                             .environmentObject(viewModel)
                             .navigationBarTitle("Favourite", displayMode: .large)
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    EditButton()
-                                }
-                            }
                     case .chats:
                         ChatsView()
                             .environmentObject(viewModel)
