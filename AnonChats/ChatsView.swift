@@ -2,12 +2,13 @@ import SwiftUI
 
 struct ChatsView: View {
 
+    @State var isActive: Bool = false
     @State private var query = ""
     @EnvironmentObject var viewModel: Chats
 
     var body: some View {
-        List(viewModel.getSortedFilteredChats(query: query, sortedBy: viewModel.query)) { chat in
-            NavigationLink(destination: ChatView().environmentObject(viewModel)) {
+        List(viewModel.getSortedFilteredChats(query: query)) { chat in
+            NavigationLink(destination: ChatView(chat: chat, chats: viewModel, rootIsActive: self.$isActive), isActive: self.$isActive) {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(chat.title)
@@ -20,10 +21,18 @@ struct ChatsView: View {
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                 } .padding(.vertical, 10)
             }
+            .isDetailLink(false)
+            .contextMenu {
+                Button(action: {
+                    viewModel.addToFavourite(id: chat.id)
+                }) {
+                    Image(systemName: "star")
+                    Text("Add to favourite")
+                }
+            }
         }
-        .padding(.top, -10)
-        .searchable(text: $query)
         .listStyle(.plain)
+        .searchable(text: $query)
         .refreshable {
             viewModel.fetchData()
         }
