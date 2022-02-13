@@ -3,72 +3,58 @@ import SwiftUI
 
 struct ChatView: View {
 
+    let chat: Chat
+    let chats: Chats
+    var rootIsActive: Binding<Bool>
     @State var text = ""
     @FocusState var isFocused: Bool
-    @EnvironmentObject var viewModel: Chats
-    @State private var messages = ["1", "2", "3", "4", "5", "6", "7",
-                                   "8", "9", "10", "11", "12", "13", "14",
-                                   "15", "16", "17", "18", "19", "20", "21",
-                                   "22", "23", "24", "25", "26", "27", "28",
-                                   "29", "30", "31", "32", "33", "34", "35",
-                                   "36", "37", "38", "39", "40", "41", "42",
-                                   "43", "44", "45", "46", "47", "48", "49"]
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var viewModel = Messages()
+
+    init(chat: Chat, chats: Chats, rootIsActive: Binding<Bool>) {
+        self.chat = chat
+        self.chats = chats
+        self.rootIsActive = rootIsActive
+        self.chats.joinChat(id: chat.id)
+        viewModel.fetchData(docId: chat.id)
+    }
 
     var body: some View {
         ZStack {
             ScrollViewReader { scrollView in
                 ScrollView {
                     LazyVStack {
-                        ForEach(messages, id: \.self) { message in
+                        ForEach(viewModel.messages) { message in
                             HStack {
-                                Spacer()
-                                Text(message)
-                                    .background(.pink)
-                                    .padding()
-                                    .overlay(RoundedRectangle(cornerRadius: 20)
-                                                .stroke(.white, lineWidth: 1))
-                                Spacer()
+                                Text(message.text)
                             }
+                            .overlay(RoundedRectangle(cornerRadius: 20)
+                                        .background(message.fromId == message.toId ? .green : .blue))
+                            .id(message.id)
                         }
                     }
                     .padding(.bottom, 55)
                     .id("end")
-                    .onChange(of: isFocused) { _ in
-                        if isFocused {
-                            withAnimation {
-                                scrollView.scrollTo("end", anchor: .bottom)
-                            }
-                        }
-                    }
                 }
                 .onAppear {
                     scrollView.scrollTo("end", anchor: .bottom)
                 }
-                .onChange(of: messages) { _ in
+                .onTapGesture {
+                    self.isFocused = false
+                }
+                .onChange(of: viewModel.messages) { _ in
                     withAnimation {
                         scrollView.scrollTo("end", anchor: .bottom)
                     }
                 }
-                .onTapGesture {
-                    self.isFocused = false
+                .onChange(of: isFocused) { _ in
+                    if isFocused {
+                        withAnimation {
+                            scrollView.scrollTo("end", anchor: .bottom)
+                        }
+                    }
                 }
             }
-            VStack(spacing: 0) {
-                HStack(alignment: .center) {
-                    Text("1/2")
-                    Spacer()
-                    Text("topic")
-                        .padding(.vertical, 5)
-                    Spacer()
-                    Image(systemName: "repeat")
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                }
-                .padding(.horizontal, 20)
-                .background(.bar)
-                Divider()
-            } .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .top)
             HStack {
                 MultilineTextField("Message", text: self.$text)
                     .font(.system(size: 18, weight: .regular, design: .rounded))
@@ -76,11 +62,12 @@ struct ChatView: View {
                     .padding(.trailing, 5)
                     .overlay(RoundedRectangle(cornerRadius: 20)
                                 .stroke(colorScheme == .dark ? .white : .black, lineWidth: 1)
-                                .padding(.leading, 10))
+                                .padding(.leading, 10)
+                                .padding(.vertical, 4))
                     .focused($isFocused)
                 Button(action: {
                     if text != "" {
-                        self.messages.append(text)
+                        viewModel.sendMessage(message: Message(id: chat.id, text: text, fromId: viewModel.user!.uid, toId: chat.id), docId: chat.id)
                         self.text = ""
                     }
                 }) {
@@ -95,19 +82,21 @@ struct ChatView: View {
             .background(.bar)
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .bottom)
         }
-        .navigationBarTitle("name", displayMode: .inline)
+        .navigationBarTitle(chat.title, displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: EditView().environmentObject(viewModel)) {
+                NavigationLink(destination: EditView(chat: chat, shouldPopToRootView: self.rootIsActive).environmentObject(viewModel)) {
                     Text("Edit")
+                } .isDetailLink(false)
+            }
+            ToolbarItem(placement: .principal) {
+                VStack(alignment: .center, spacing: 0) {
+                    Text(chat.title)
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    Text(chat.topic)
+                        .foregroundColor(.gray)
                 }
             }
         }
-    }
-}
-
-struct ChatView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChatView()
     }
 }
