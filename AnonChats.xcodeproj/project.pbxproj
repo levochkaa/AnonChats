@@ -92,6 +92,9 @@
 		DF30CC7527B001AE00D665C7 /* AnonChats */ = {
 			isa = PBXGroup;
 			children = (
+				DF30CC7C27B001AE00D665C7 /* Preview Content */,
+				DF30CC7A27B001AE00D665C7 /* Assets.xcassets */,
+				DF30CC8427B001B700D665C7 /* GoogleService-Info.plist */,
 				DF30CC7627B001AE00D665C7 /* AnonChatsApp.swift */,
 				DF30CC7827B001AE00D665C7 /* ContentView.swift */,
 				DF9FECA427B02EAB00905A48 /* MainView.swift */,
@@ -105,12 +108,9 @@
 				DF7A856427B05F12008F7C96 /* ChatsView.swift */,
 				DF7A857027B0667C008F7C96 /* AddChatView.swift */,
 				DF7A856A27B05F72008F7C96 /* ChatView.swift */,
-				DF30CC7A27B001AE00D665C7 /* Assets.xcassets */,
-				DF30CC8427B001B700D665C7 /* GoogleService-Info.plist */,
-				DF30CC7C27B001AE00D665C7 /* Preview Content */,
+				DF7A857827B3B8E7008F7C96 /* EditView.swift */,
 				DF7A856C27B05F88008F7C96 /* Models.swift */,
 				DF7A856E27B05FA8008F7C96 /* Extensions.swift */,
-				DF7A857827B3B8E7008F7C96 /* EditView.swift */,
 			);
 			path = AnonChats;
 			sourceTree = "<group>";
