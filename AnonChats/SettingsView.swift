@@ -2,23 +2,19 @@ import SwiftUI
 
 struct SettingsView: View {
 
-    @State var username = "Username"
     @EnvironmentObject var firebase: FirebaseSession
-    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var userModel: UserViewModel
 
     var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-            Spacer()
-            Text("Your username:")
-                .font(.largeTitle)
-                .padding(.bottom)
-            TextField("Username", text: $username)
-                .multilineTextAlignment(.center)
-                .padding(.vertical, 10)
-                .overlay(RoundedRectangle(cornerRadius: 20)
-                            .stroke(colorScheme == .dark ? .white : .black, lineWidth: 2))
-                .padding(.horizontal, 30)
-            Spacer()
+        Form {
+            Section(header: Text("Username")) {
+                TextField("Username", text: $userModel.userModel[0].username)
+                Button(action: {
+                    userModel.setUser(username: userModel.userModel[0].username)
+                }) {
+                    Text("Save")
+                }
+            }
             Button(action: {
                 do {
                     try firebase.auth.signOut()
@@ -29,13 +25,8 @@ struct SettingsView: View {
                 NotificationCenter.default.post(name: NSNotification.Name("statusChange"), object: nil)
             }) {
                 Text("Logout")
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .foregroundColor(.red)
-                    .padding(.vertical)
-                    .padding(.horizontal, 150)
-                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(.red, lineWidth: 2))
             }
-            .padding(.bottom, 70)
         }
     }
 }
