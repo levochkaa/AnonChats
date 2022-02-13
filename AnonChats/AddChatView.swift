@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AddChatView: View {
 
-    @State var name = ""
+    @State var title = ""
     @State var topic = ""
     @State var maxN = 0
     @State private var maxNVars = [2, 3]
@@ -12,7 +12,7 @@ struct AddChatView: View {
     var body: some View {
         NavigationView {
             Form {
-                TextField("Name", text: $name)
+                TextField("Title", text: $title)
                 TextField("Topic", text: $topic)
                 Picker("Max number of people", selection: $maxN) {
                     ForEach(0..<maxNVars.count) {
@@ -24,7 +24,7 @@ struct AddChatView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        viewModel.createChat(title: name, topic: topic, maxUsers: maxNVars[maxN], handler: {})
+                        viewModel.createChat(title: title, topic: topic, maxUsers: maxNVars[maxN])
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Create")
