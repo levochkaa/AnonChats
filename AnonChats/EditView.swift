@@ -2,19 +2,20 @@ import SwiftUI
 
 struct EditView: View {
 
+    @State var chat: Chat
+    @Binding var shouldPopToRootView: Bool
     @State private var maxNVars = [2, 3]
-    @EnvironmentObject var viewModel: Chats
-    @State var text = ""
     @State var select = 0
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var viewModel: Messages
 
     var body: some View {
         Form {
-            Section(header: Text("Name")) {
-                TextField("Name", text: $text)
+            Section(header: Text("Title")) {
+                TextField("Title", text: $chat.title)
             }
             Section(header: Text("Topic")) {
-                TextField("Topic", text: $text)
+                TextField("Topic", text: $chat.topic)
             }
             Section(header: Text("Max number of people")) {
                 Picker("Max number of people", selection: $select) {
@@ -22,18 +23,22 @@ struct EditView: View {
                         Text("\(maxNVars[$0])")
                     }
                 } .pickerStyle(.segmented)
+            } .onChange(of: self.select) { _ in
+                self.chat.maxUsers = maxNVars[select]
+            }
+            Button(action: {
+                viewModel.deleteChat(id: chat.id)
+                self.shouldPopToRootView = false
+            }) {
+                Text("Delete the chat")
+                    .foregroundColor(.red)
             }
         }
-        .navigationTitle("Edit")
-        .safeAreaInset(edge: .top) {
-            VStack(spacing: 0) {
-                Color(red: 50/255, green: 50/255, blue: 50/255, opacity: 1)
-                    .frame(height: CGFloat(1) / UIScreen.main.scale)
-            } .background(.bar)
-        }
+        .navigationBarTitle("Edit", displayMode: .large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
+                    viewModel.updateData(id: chat.id, title: chat.title, topic: chat.topic, maxUsers: chat.maxUsers)
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Save")
