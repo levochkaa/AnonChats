@@ -6,32 +6,29 @@ struct HomeView: View {
     @State private var showAddChatView = false
     @ObservedObject var viewModel = Chats()
     @ObservedObject var firebase = FirebaseSession()
+    @ObservedObject var userModel = UserViewModel()
 
     init() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.shadowColor = .none
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        UINavigationBar.appearance().standardAppearance = appearance
         viewModel.fetchData()
     }
 
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
                 switch selectedTab {
-                case .favourite:
+                    case .favourite:
                         FavouriteView()
-                            .navigationTitle("Favourite")
+                            .environmentObject(viewModel)
+                            .navigationBarTitle("Favourite", displayMode: .large)
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarLeading) {
                                     EditButton()
                                 }
                             }
-                case .chats:
+                    case .chats:
                         ChatsView()
                             .environmentObject(viewModel)
-                            .navigationTitle("Chats")
+                            .navigationBarTitle("Chats", displayMode: .large)
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
                                     Button(action: {
@@ -46,61 +43,42 @@ struct HomeView: View {
                                     MenuView().environmentObject(viewModel)
                                 }
                             }
-                case .settings:
+                    case .settings:
                         SettingsView()
                             .environmentObject(firebase)
-                            .navigationTitle("Settings")
-                }
-                Spacer()
-                HStack(spacing: 100) {
+                            .environmentObject(userModel)
+                            .navigationBarTitle("Settings", displayMode: .large)
+                    }
+                HStack(spacing: 110) {
                     Button(action: {
                         self.selectedTab = .favourite
                     }) {
-                        VStack {
-                            Image(systemName: "star.fill")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(selectedTab == .favourite ? .accentColor : .gray)
-                            Text("Favourite")
-                                .font(.system(size: 10, weight: .regular, design: .rounded))
-                                .foregroundColor(selectedTab == .favourite ? .accentColor : .gray)
-                        }
+                        Image(systemName: "star.fill")
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(selectedTab == .favourite ? .accentColor : .gray)
                     }
                     Button(action: {
                         self.selectedTab = .chats
                     }) {
-                        VStack {
-                            Image(systemName: "message.fill")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(selectedTab == .chats ? .accentColor : .gray)
-                            Text("Chats")
-                                .font(.system(size: 10, weight: .regular, design: .rounded))
-                                .foregroundColor(selectedTab == .chats ? .accentColor : .gray)
-                        }
+                        Image(systemName: "message.fill")
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(selectedTab == .chats ? .accentColor : .gray)
                     }
                     Button(action: {
                         self.selectedTab = .settings
                     }) {
-                        VStack {
-                            Image(systemName: "gearshape.fill")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(selectedTab == .settings ? .accentColor : .gray)
-                            Text("Settings")
-                                .font(.system(size: 10, weight: .regular, design: .rounded))
-                                .foregroundColor(selectedTab == .settings ? .accentColor : .gray)
-                        }
+                        Image(systemName: "gearshape.fill")
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(selectedTab == .settings ? .accentColor : .gray)
                     }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 50, alignment: .bottom)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 70)
                 .background(.bar)
-            }
-            .safeAreaInset(edge: .top) {
-                VStack(spacing: 0) {
-                    Color(red: 50/255, green: 50/255, blue: 50/255, opacity: 1)
-                        .frame(height: CGFloat(1) / UIScreen.main.scale)
-                } .background(.bar)
+                .frame(minWidth: UIScreen.main.bounds.width, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .bottom)
             }
         }
     }
