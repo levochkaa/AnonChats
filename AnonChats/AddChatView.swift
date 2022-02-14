@@ -24,7 +24,9 @@ struct AddChatView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        viewModel.createChat(title: title, topic: topic, maxUsers: maxNVars[maxN])
+                        let uid = UUID().uuidString
+                        viewModel.createChat(title: title, topic: topic, maxUsers: maxNVars[maxN], uid: uid)
+                        viewModel.addToFavourite(id: uid)
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Create")
