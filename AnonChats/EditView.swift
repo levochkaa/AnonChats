@@ -3,11 +3,11 @@ import SwiftUI
 struct EditView: View {
 
     @State var chat: Chat
-    @Binding var shouldPopToRootView: Bool
     @State private var maxNVars = [2, 3]
     @State var select = 0
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var viewModel: Messages
+    @EnvironmentObject var appState: AppState
 
     var body: some View {
         Form {
@@ -28,7 +28,7 @@ struct EditView: View {
             }
             Button(action: {
                 viewModel.deleteChat(id: chat.id)
-                self.shouldPopToRootView = false
+                appState.rootViewId = UUID()
             }) {
                 Text("Delete the chat")
                     .foregroundColor(.red)
