@@ -8,9 +8,9 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section(header: Text("Username")) {
-                TextField("Username", text: $userModel.userModel[0].username)
+                TextField("Username", text: $userModel.userModel.first!.username)
                 Button(action: {
-                    userModel.setUser(username: userModel.userModel[0].username)
+                    userModel.setUser(username: userModel.userModel.first!.username)
                 }) {
                     Text("Save")
                 }
