@@ -80,16 +80,21 @@ struct ChatView: View {
         .navigationBarTitle(chat.title, displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: EditView(chat: chat).environmentObject(viewModel).environmentObject(appState)) {
+                NavigationLink(destination: EditView(chat: chat)
+                                .environmentObject(viewModel)
+                                .environmentObject(chats)
+                                .environmentObject(appState)) {
                     Text("Edit")
-                } .isDetailLink(false)
+                }
             }
             ToolbarItem(placement: .principal) {
                 VStack(alignment: .center, spacing: 0) {
                     Text(chat.title)
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .lineLimit(1)
                     Text(chat.topic)
                         .foregroundColor(.gray)
+                        .lineLimit(1)
                 } .padding(.bottom, 5)
             }
         }
