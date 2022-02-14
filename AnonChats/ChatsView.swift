@@ -5,10 +5,11 @@ struct ChatsView: View {
     @State private var query = ""
     @EnvironmentObject var viewModel: Chats
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var userModel: UserViewModel
     
     var body: some View {
         List(viewModel.getSortedFilteredChats(query: query)) { chat in
-            NavigationLink(destination: ChatView(chat: chat).environmentObject(viewModel).environmentObject(appState)) {
+            NavigationLink(destination: ChatView(chat: chat).environmentObject(viewModel).environmentObject(appState).environmentObject(userModel)) {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(chat.title)

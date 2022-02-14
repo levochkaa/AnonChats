@@ -27,20 +27,22 @@ struct EditView: View {
             } .onChange(of: self.select) { _ in
                 self.chat.maxUsers = maxNVars[select]
             }
-            Section {
+            Section(header: Text("Bad things")) {
                 Button(action: {
-                    chats.addToFavourite(id: chat.id)
-                }) {
-                    Text("Add to favourite")
-                }
-                Button(action: {
+                    appState.rootViewId = UUID()
                     chats.removeFromFavourite(id: chat.id)
                 }) {
                     Text("Remove from favourite")
                         .foregroundColor(.red)
                 }
-            }
-            Section {
+                Button(action: {
+                    chats.leaveChat(id: chat.id)
+                    chats.removeFromFavourite(id: chat.id)
+                    appState.rootViewId = UUID()
+                }) {
+                    Text("Leave the chat")
+                        .foregroundColor(.red)
+                }
                 Button(action: {
                     chats.deleteChat(id: chat.id)
                     appState.rootViewId = UUID()

@@ -7,6 +7,15 @@ struct MenuView: View {
     var body: some View {
         Menu {
             Button(action: {
+                self.viewModel.query = 0
+            }) {
+                HStack {
+                    Text("Open")
+                    Spacer()
+                    Image(systemName: "lock.open.fill")
+                }
+            }
+            Button(action: {
                 self.viewModel.query = 1
             }) {
                 HStack {

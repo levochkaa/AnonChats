@@ -26,6 +26,7 @@ struct HomeView: View {
                         ChatsView()
                             .environmentObject(viewModel)
                             .environmentObject(appState)
+                            .environmentObject(userModel)
                             .navigationBarTitle("Chats", displayMode: .large)
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {

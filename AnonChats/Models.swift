@@ -17,6 +17,7 @@ struct Message: Codable, Identifiable, Equatable {
     var id: String
     var text: String
     var fromId: String
+    var username: String
 }
 
 class Messages: ObservableObject {
@@ -25,17 +26,13 @@ class Messages: ObservableObject {
     private let firestore = Firestore.firestore()
 
     func updateData(id: String, title: String, topic: String, maxUsers: Int) {
-        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments { (snapshot, error) in
-            if let error = error {
-                print("error getting docs \(error)")
-            } else {
-                let document = snapshot!.documents.first
-                document?.reference.updateData([
-                    "title": title,
-                    "topic": topic,
-                    "maxUsers": maxUsers
-                ])
-            }
+        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
+            let document = snapshot!.documents.first
+            document?.reference.updateData([
+                "title": title,
+                "topic": topic,
+                "maxUsers": maxUsers
+            ])
         }
     }
 
@@ -47,11 +44,11 @@ class Messages: ObservableObject {
                     "sentAt": Date(),
                     "id": message.id,
                     "text": message.text,
-                    "fromId": message.fromId
+                    "fromId": message.fromId,
+                    "username": message.username
                 ])
             }
         }
-
     }
 
     func fetchData(id: String) {
@@ -59,12 +56,21 @@ class Messages: ObservableObject {
             for document in snapshot!.documents {
                 let docId = document.documentID
                 self.firestore.collection("chats").document(docId).collection("messages").order(by: "sentAt", descending: false).addSnapshotListener({(snapshot, _) in
-                    self.messages = snapshot!.documents.map { docSnapshot -> Message in
-                        let data = docSnapshot.data()
-                        let docId = docSnapshot.documentID
+                    for doc in snapshot!.documents {
+                        let data = doc.data()
+                        let docId = doc.documentID
                         let text = data["text"] as? String ?? ""
                         let fromId = data["fromId"] as? String ?? ""
-                        return Message(id: docId, text: text, fromId: fromId)
+                        self.firestore.collection("users").whereField("uid", isEqualTo: fromId).getDocuments {(snap, _) in
+                            for d in snap!.documents {
+                                let dat = d.data()
+                                let username = dat["username"] as? String ?? ""
+                                let message = Message(id: docId, text: text, fromId: fromId, username: username)
+                                if self.messages.firstIndex(of: message) == nil {
+                                    self.messages.append(message)
+                                }
+                            }
+                        }
                     }
                 })
             }
@@ -89,7 +95,9 @@ class Chats: ObservableObject {
     private let firestore = Firestore.firestore()
 
     func getSortedFilteredChats(query: String) -> [Chat] {
-        let chats = self.chats.filter { $0.maxUsers != $0.users.count }
+        if self.query == 0 {
+            self.chats = self.chats.filter { $0.maxUsers != $0.users.count }
+        }
         if query == "" && self.query == 1 {
             return chats
         } else if query == "" && self.query != 1 {
@@ -111,7 +119,7 @@ class Chats: ObservableObject {
     }
 
     func addToFavourite(id: String) {
-        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments { (snapshot, _) in
+        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
             for document in snapshot!.documents {
                 self.firestore.collection("chats").document(document.documentID).updateData([
                     "favourite": FieldValue.arrayUnion([self.user!.uid])
@@ -121,7 +129,7 @@ class Chats: ObservableObject {
     }
 
     func removeFromFavourite(id: String) {
-        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments { (snapshot, _) in
+        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
             for document in snapshot!.documents {
                 self.firestore.collection("chats").document(document.documentID).updateData([
                     "favourite": FieldValue.arrayRemove([self.user!.uid])
@@ -170,10 +178,20 @@ class Chats: ObservableObject {
     }
 
     func joinChat(id: String) {
-        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments { (snapshot, _) in
+        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
             for document in snapshot!.documents {
                 self.firestore.collection("chats").document(document.documentID).updateData([
                     "users": FieldValue.arrayUnion([self.user!.uid])
+                ])
+            }
+        }
+    }
+
+    func leaveChat(id: String) {
+        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
+            for document in snapshot!.documents {
+                self.firestore.collection("chats").document(document.documentID).updateData([
+                    "users": FieldValue.arrayRemove([self.user!.uid])
                 ])
             }
         }
@@ -204,19 +222,19 @@ class UserViewModel: ObservableObject {
     }
 
     func fetchUser() {
-        self.firestore.collection("users").whereField("uid", isEqualTo: user!.uid).getDocuments { (snapshot, _) in
-            print(snapshot!.documents)
+        self.firestore.collection("users").whereField("uid", isEqualTo: user!.uid).getDocuments {(snapshot, _) in
             for document in snapshot!.documents {
                 let data = document.data()
                 let uid = data["uid"] as? String ?? ""
                 let username = data["username"] as? String ?? ""
+                self.userModel.removeAll()
                 self.userModel.append(User(uid: uid, username: username))
             }
         }
     }
 
     func setUser(username: String) {
-        self.firestore.collection("users").whereField("uid", isEqualTo: user!.uid).getDocuments { (snapshot, _) in
+        self.firestore.collection("users").whereField("uid", isEqualTo: user!.uid).getDocuments {(snapshot, _) in
             for document in snapshot!.documents {
                 self.firestore.collection("users").document(document.documentID).updateData([
                     "username": username

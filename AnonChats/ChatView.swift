@@ -10,6 +10,7 @@ struct ChatView: View {
     @ObservedObject var viewModel = Messages()
     @EnvironmentObject var chats: Chats
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var userModel: UserViewModel
     
     init(chat: Chat) {
         self.chat = chat
@@ -59,7 +60,7 @@ struct ChatView: View {
                     .focused($isFocused)
                 Button(action: {
                     if text != "" {
-                        viewModel.sendMessage(message: Message(id: chat.id, text: text, fromId: viewModel.user!.uid))
+                        viewModel.sendMessage(message: Message(id: chat.id, text: text, fromId: viewModel.user!.uid, username: userModel.userModel.first!.username))
                         self.text = ""
                     }
                 }) {
@@ -76,6 +77,7 @@ struct ChatView: View {
         }
         .onAppear {
             chats.joinChat(id: chat.id)
+            chats.addToFavourite(id: chat.id)
         }
         .navigationBarTitle(chat.title, displayMode: .inline)
         .toolbar {
