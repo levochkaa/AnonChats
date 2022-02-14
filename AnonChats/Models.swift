@@ -95,8 +95,9 @@ class Chats: ObservableObject {
     private let firestore = Firestore.firestore()
 
     func getSortedFilteredChats(query: String) -> [Chat] {
+        var chats = self.chats
         if self.query == 0 {
-            self.chats = self.chats.filter { $0.maxUsers != $0.users.count }
+            chats = self.chats.filter { $0.maxUsers != $0.users.count }
         }
         if query == "" && self.query == 1 {
             return chats

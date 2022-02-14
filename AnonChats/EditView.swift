@@ -3,8 +3,6 @@ import SwiftUI
 struct EditView: View {
 
     @State var chat: Chat
-    @State private var maxNVars = [2, 3]
-    @State var select = 0
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var viewModel: Messages
     @EnvironmentObject var chats: Chats
@@ -17,15 +15,6 @@ struct EditView: View {
             }
             Section(header: Text("Topic")) {
                 TextField("Topic", text: $chat.topic)
-            }
-            Section(header: Text("Max number of people")) {
-                Picker("Max number of people", selection: $select) {
-                    ForEach(0..<maxNVars.count) {
-                        Text("\(maxNVars[$0])")
-                    }
-                } .pickerStyle(.segmented)
-            } .onChange(of: self.select) { _ in
-                self.chat.maxUsers = maxNVars[select]
             }
             Section(header: Text("Bad things")) {
                 Button(action: {
@@ -56,8 +45,8 @@ struct EditView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
                     viewModel.updateData(id: chat.id, title: chat.title, topic: chat.topic, maxUsers: chat.maxUsers)
-                    presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Save")
                 }

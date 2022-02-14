@@ -22,6 +22,14 @@ struct MessageView: View {
             .background(message.fromId == self.toId ? .blue : Color(red: 30/255, green: 30/255, blue: 30/255))
             .cornerRadius(20)
             .frame(maxWidth: 300, alignment: message.fromId == self.toId ? .trailing : .leading)
+            .contextMenu {
+                Button(action: {
+                    UIPasteboard.general.string = message.text
+                }) {
+                    Text("Copy")
+                    Image(systemName: "doc.on.doc")
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: message.fromId == self.toId ? .trailing : .leading)
         .padding(message.fromId == self.toId ? .trailing : .leading)

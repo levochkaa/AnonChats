@@ -24,6 +24,7 @@ struct ChatsView: View {
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
                 } .padding(.vertical, 10)
             }
+            .disabled(chat.maxUsers == chat.users.count && !chat.users.contains(viewModel.user!.uid))
             .contextMenu {
                 Button(action: {
                     viewModel.addToFavourite(id: chat.id)
