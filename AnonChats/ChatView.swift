@@ -4,19 +4,16 @@ import SwiftUI
 struct ChatView: View {
     
     let chat: Chat
-    let chats: Chats
-    var rootIsActive: Binding<Bool>
     @State var text = ""
     @FocusState var isFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel = Messages()
+    @EnvironmentObject var chats: Chats
+    @EnvironmentObject var appState: AppState
     
-    init(chat: Chat, chats: Chats, rootIsActive: Binding<Bool>) {
+    init(chat: Chat) {
         self.chat = chat
-        self.chats = chats
-        self.rootIsActive = rootIsActive
-        self.chats.joinChat(id: chat.id)
-        viewModel.fetchData(docId: chat.id)
+        viewModel.fetchData(id: chat.id)
     }
     
     var body: some View {
@@ -25,12 +22,7 @@ struct ChatView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(viewModel.messages) { message in
-                            HStack {
-                                Text(message.text)
-                            }
-                            .overlay(RoundedRectangle(cornerRadius: 20)
-                                        .background(message.fromId == message.toId ? .green : .blue))
-                            .id(message.id)
+                            MessageView(message: message, toId: viewModel.user!.uid)
                         }
                     }
                     .padding(.bottom, 55)
@@ -67,7 +59,7 @@ struct ChatView: View {
                     .focused($isFocused)
                 Button(action: {
                     if text != "" {
-                        viewModel.sendMessage(message: Message(id: chat.id, text: text, fromId: viewModel.user!.uid, toId: chat.id), docId: chat.id)
+                        viewModel.sendMessage(message: Message(id: chat.id, text: text, fromId: viewModel.user!.uid))
                         self.text = ""
                     }
                 }) {
@@ -82,10 +74,13 @@ struct ChatView: View {
             .background(.bar)
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .bottom)
         }
+        .onAppear {
+            chats.joinChat(id: chat.id)
+        }
         .navigationBarTitle(chat.title, displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: EditView(chat: chat, shouldPopToRootView: self.rootIsActive).environmentObject(viewModel)) {
+                NavigationLink(destination: EditView(chat: chat).environmentObject(viewModel).environmentObject(appState)) {
                     Text("Edit")
                 } .isDetailLink(false)
             }
@@ -95,7 +90,7 @@ struct ChatView: View {
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
                     Text(chat.topic)
                         .foregroundColor(.gray)
-                }
+                } .padding(.bottom, 5)
             }
         }
     }
