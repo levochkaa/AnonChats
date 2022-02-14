@@ -7,6 +7,7 @@ struct HomeView: View {
     @ObservedObject var viewModel = Chats()
     @ObservedObject var firebase = FirebaseSession()
     @ObservedObject var userModel = UserViewModel()
+    @ObservedObject var appState = AppState()
 
     init() {
         viewModel.fetchData()
@@ -19,10 +20,12 @@ struct HomeView: View {
                     case .favourite:
                         FavouriteView()
                             .environmentObject(viewModel)
+                            .environmentObject(appState)
                             .navigationBarTitle("Favourite", displayMode: .large)
                     case .chats:
                         ChatsView()
                             .environmentObject(viewModel)
+                            .environmentObject(appState)
                             .navigationBarTitle("Chats", displayMode: .large)
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -74,7 +77,7 @@ struct HomeView: View {
                 .padding(.horizontal, 70)
                 .background(.bar)
                 .frame(minWidth: UIScreen.main.bounds.width, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .bottom)
-            }
+            } .id(appState.rootViewId)
         }
     }
 }
