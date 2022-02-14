@@ -7,6 +7,7 @@ struct EditView: View {
     @State var select = 0
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var viewModel: Messages
+    @EnvironmentObject var chats: Chats
     @EnvironmentObject var appState: AppState
 
     var body: some View {
@@ -26,12 +27,27 @@ struct EditView: View {
             } .onChange(of: self.select) { _ in
                 self.chat.maxUsers = maxNVars[select]
             }
-            Button(action: {
-                viewModel.deleteChat(id: chat.id)
-                appState.rootViewId = UUID()
-            }) {
-                Text("Delete the chat")
-                    .foregroundColor(.red)
+            Section {
+                Button(action: {
+                    chats.addToFavourite(id: chat.id)
+                }) {
+                    Text("Add to favourite")
+                }
+                Button(action: {
+                    chats.removeFromFavourite(id: chat.id)
+                }) {
+                    Text("Remove from favourite")
+                        .foregroundColor(.red)
+                }
+            }
+            Section {
+                Button(action: {
+                    chats.deleteChat(id: chat.id)
+                    appState.rootViewId = UUID()
+                }) {
+                    Text("Delete the chat")
+                        .foregroundColor(.red)
+                }
             }
         }
         .navigationBarTitle("Edit", displayMode: .large)
