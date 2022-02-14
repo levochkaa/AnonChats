@@ -39,15 +39,6 @@ class Messages: ObservableObject {
         }
     }
 
-    func deleteChat(id: String) {
-        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
-            for document in snapshot!.documents {
-                let docId = document.documentID
-                self.firestore.collection("chats").document(docId).delete()
-            }
-        }
-    }
-
     func sendMessage(message: Message) {
         self.firestore.collection("chats").whereField("uid", isEqualTo: message.id).getDocuments {(snapshot, _) in
             for document in snapshot!.documents {
@@ -81,7 +72,7 @@ class Messages: ObservableObject {
     }
 }
 
-struct Chat: Codable, Identifiable {
+struct Chat: Codable, Identifiable, Equatable {
     var id: String
     var title: String
     var topic: String
@@ -98,6 +89,7 @@ class Chats: ObservableObject {
     private let firestore = Firestore.firestore()
 
     func getSortedFilteredChats(query: String) -> [Chat] {
+        let chats = self.chats.filter { $0.maxUsers != $0.users.count }
         if query == "" && self.query == 1 {
             return chats
         } else if query == "" && self.query != 1 {
@@ -166,9 +158,9 @@ class Chats: ObservableObject {
         })
     }
 
-    func createChat(title: String, topic: String, maxUsers: Int) {
+    func createChat(title: String, topic: String, maxUsers: Int, uid: String) {
         self.firestore.collection("chats").addDocument(data: [
-            "uid": UUID().uuidString,
+            "uid": uid,
             "title": title,
             "topic": topic,
             "maxUsers": maxUsers,
@@ -183,6 +175,15 @@ class Chats: ObservableObject {
                 self.firestore.collection("chats").document(document.documentID).updateData([
                     "users": FieldValue.arrayUnion([self.user!.uid])
                 ])
+            }
+        }
+    }
+
+    func deleteChat(id: String) {
+        self.firestore.collection("chats").whereField("uid", isEqualTo: id).getDocuments {(snapshot, _) in
+            for document in snapshot!.documents {
+                let docId = document.documentID
+                self.firestore.collection("chats").document(docId).delete()
             }
         }
     }
