@@ -15,17 +15,19 @@ struct SettingsView: View {
                     Text("Save")
                 }
             }
-            Button(action: {
-                do {
-                    try firebase.auth.signOut()
-                } catch {
-                    print("didn't signOut")
+            Section(header: Text("Are you sure?")) {
+                Button(action: {
+                    do {
+                        try firebase.auth.signOut()
+                    } catch {
+                        print("didn't signOut")
+                    }
+                    UserDefaults.standard.set(false, forKey: "status")
+                    NotificationCenter.default.post(name: NSNotification.Name("statusChange"), object: nil)
+                }) {
+                    Text("Logout")
+                        .foregroundColor(.red)
                 }
-                UserDefaults.standard.set(false, forKey: "status")
-                NotificationCenter.default.post(name: NSNotification.Name("statusChange"), object: nil)
-            }) {
-                Text("Logout")
-                    .foregroundColor(.red)
             }
         }
     }
