@@ -21,6 +21,7 @@ struct HomeView: View {
                         FavouriteView()
                             .environmentObject(viewModel)
                             .environmentObject(appState)
+                            .environmentObject(userModel)
                             .navigationBarTitle("Favourite", displayMode: .large)
                     case .chats:
                         ChatsView()

@@ -34,6 +34,9 @@ struct ChatsView: View {
                 }
             }
         }
+        .onAppear {
+            userModel.fetchUser()
+        }
         .listStyle(.plain)
         .searchable(text: $query)
         .refreshable {

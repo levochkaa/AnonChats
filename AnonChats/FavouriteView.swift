@@ -5,6 +5,7 @@ struct FavouriteView: View {
     @State private var query = ""
     @EnvironmentObject var viewModel: Chats
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var userModel: UserViewModel
 
     var body: some View {
         List(viewModel.getFavouriteFilteredChats(query: query)) { chat in
@@ -29,6 +30,9 @@ struct FavouriteView: View {
                     Text("Remove from favourite")
                 }
             }
+        }
+        .onAppear {
+            userModel.fetchUser()
         }
         .listStyle(.plain)
         .searchable(text: $query)
