@@ -56,21 +56,13 @@ class Messages: ObservableObject {
             for document in snapshot!.documents {
                 let docId = document.documentID
                 self.firestore.collection("chats").document(docId).collection("messages").order(by: "sentAt", descending: false).addSnapshotListener({(snapshot, _) in
-                    for doc in snapshot!.documents {
-                        let data = doc.data()
-                        let docId = doc.documentID
+                    self.messages = snapshot!.documents.map { docSnapshot -> Message in
+                        let data = docSnapshot.data()
+                        let docId = docSnapshot.documentID
                         let text = data["text"] as? String ?? ""
                         let fromId = data["fromId"] as? String ?? ""
-                        self.firestore.collection("users").whereField("uid", isEqualTo: fromId).getDocuments {(snap, _) in
-                            for d in snap!.documents {
-                                let dat = d.data()
-                                let username = dat["username"] as? String ?? ""
-                                let message = Message(id: docId, text: text, fromId: fromId, username: username)
-                                if self.messages.firstIndex(of: message) == nil {
-                                    self.messages.append(message)
-                                }
-                            }
-                        }
+                        let username = data["username"] as? String ?? ""
+                        return Message(id: docId, text: text, fromId: fromId, username: username)
                     }
                 })
             }
@@ -230,6 +222,17 @@ class UserViewModel: ObservableObject {
                 let username = data["username"] as? String ?? ""
                 self.userModel.removeAll()
                 self.userModel.append(User(uid: uid, username: username))
+            }
+        }
+        self.firestore.collection("chats").whereField("users", arrayContains: user!.uid).getDocuments {(snapshot, _) in
+            for document in snapshot!.documents {
+                self.firestore.collection("chats").document(document.documentID).collection("messages").whereField("fromId", isEqualTo: self.user!.uid).addSnapshotListener {(snap, _) in
+                    for doc in snap!.documents {
+                        self.firestore.collection("chats").document(document.documentID).collection("messages").document(doc.documentID).updateData([
+                            "username": self.userModel.first!.username
+                        ])
+                    }
+                }
             }
         }
     }
