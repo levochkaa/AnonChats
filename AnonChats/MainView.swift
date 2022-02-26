@@ -20,7 +20,7 @@ struct MainView: View {
                 Text("AnonChats")
                     .font(.system(size: 48, weight: .semibold, design: .rounded))
                     .multilineTextAlignment(.center)
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl condimentum id venenatis a.")
+                Text("Hi! This app is made to find people for communication, while on the lockdown. Click a button below to proceed. Happy messaging!")
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
                 Button(action: {
