@@ -133,29 +133,33 @@ class Chats: ObservableObject {
 
     func fetchData() {
         self.firestore.collection("chats").whereField("favourite", arrayContains: user!.uid).addSnapshotListener {(snapshot, _) in
-            self.favouriteChats = snapshot!.documents.map({docSnapshot -> Chat in
-                let data = docSnapshot.data()
-                let uid = data["uid"] as? String ?? "?"
-                let title = data["title"] as? String ?? "?"
-                let topic = data["topic"] as? String ?? "?"
-                let maxUsers = data["maxUsers"] as? Int ?? -1
-                let users = data["users"] as? [String] ?? []
-                let favourite = data["favourite"] as? [String] ?? []
-                return Chat(id: uid, title: title, topic: topic, maxUsers: maxUsers, users: users, favourite: favourite)
-            })
+            if snapshot != nil {
+                self.favouriteChats = snapshot!.documents.map({docSnapshot -> Chat in
+                    let data = docSnapshot.data()
+                    let uid = data["uid"] as? String ?? "?"
+                    let title = data["title"] as? String ?? "?"
+                    let topic = data["topic"] as? String ?? "?"
+                    let maxUsers = data["maxUsers"] as? Int ?? -1
+                    let users = data["users"] as? [String] ?? []
+                    let favourite = data["favourite"] as? [String] ?? []
+                    return Chat(id: uid, title: title, topic: topic, maxUsers: maxUsers, users: users, favourite: favourite)
+                })
+            }
         }
 
         self.firestore.collection("chats").addSnapshotListener({(snapshot, _) in
-            self.chats = snapshot!.documents.map({docSnapshot -> Chat in
-                let data = docSnapshot.data()
-                let uid = data["uid"] as? String ?? "?"
-                let title = data["title"] as? String ?? "?"
-                let topic = data["topic"] as? String ?? "?"
-                let maxUsers = data["maxUsers"] as? Int ?? -1
-                let users = data["users"] as? [String] ?? []
-                let favourite = data["favourite"] as? [String] ?? []
-                return Chat(id: uid, title: title, topic: topic, maxUsers: maxUsers, users: users, favourite: favourite)
-            })
+            if snapshot != nil {
+                self.chats = snapshot!.documents.map({docSnapshot -> Chat in
+                    let data = docSnapshot.data()
+                    let uid = data["uid"] as? String ?? "?"
+                    let title = data["title"] as? String ?? "?"
+                    let topic = data["topic"] as? String ?? "?"
+                    let maxUsers = data["maxUsers"] as? Int ?? -1
+                    let users = data["users"] as? [String] ?? []
+                    let favourite = data["favourite"] as? [String] ?? []
+                    return Chat(id: uid, title: title, topic: topic, maxUsers: maxUsers, users: users, favourite: favourite)
+                })
+            }
         })
     }
 
