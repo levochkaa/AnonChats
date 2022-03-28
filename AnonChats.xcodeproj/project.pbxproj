@@ -13,6 +13,8 @@
 		DF30CC7E27B001AE00D665C7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF30CC7D27B001AE00D665C7 /* Preview Assets.xcassets */; };
 		DF30CC8527B001B700D665C7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF30CC8427B001B700D665C7 /* GoogleService-Info.plist */; };
 		DF30CC8727B001BD00D665C7 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = DF30CC8627B001BD00D665C7 /* README.md */; };
+		DF65BC9927F243240065873C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = DF65BC9827F243240065873C /* FirebaseAuth */; };
+		DF65BC9B27F243240065873C /* FirebaseFirestoreSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = DF65BC9A27F243240065873C /* FirebaseFirestoreSwift-Beta */; };
 		DF7A856527B05F12008F7C96 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A856427B05F12008F7C96 /* ChatsView.swift */; };
 		DF7A856727B05F22008F7C96 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A856627B05F22008F7C96 /* SettingsView.swift */; };
 		DF7A856927B05F3B008F7C96 /* FavouriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7A856827B05F3A008F7C96 /* FavouriteView.swift */; };
@@ -60,6 +62,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF65BC9927F243240065873C /* FirebaseAuth in Frameworks */,
+				DF65BC9B27F243240065873C /* FirebaseFirestoreSwift-Beta in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +140,8 @@
 			);
 			name = AnonChats;
 			packageProductDependencies = (
+				DF65BC9827F243240065873C /* FirebaseAuth */,
+				DF65BC9A27F243240065873C /* FirebaseFirestoreSwift-Beta */,
 			);
 			productName = AnonChats;
 			productReference = DF30CC7327B001AE00D665C7 /* AnonChats.app */;
@@ -166,7 +172,7 @@
 			);
 			mainGroup = DF30CC6A27B001AE00D665C7;
 			packageReferences = (
-				DF65BC9227F1B49E0065873C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				DF65BC9727F243240065873C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = DF30CC7427B001AE00D665C7 /* Products */;
 			projectDirPath = "";
@@ -439,7 +445,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		DF65BC9227F1B49E0065873C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		DF65BC9727F243240065873C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
@@ -448,6 +454,19 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DF65BC9827F243240065873C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF65BC9727F243240065873C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		DF65BC9A27F243240065873C /* FirebaseFirestoreSwift-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF65BC9727F243240065873C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreSwift-Beta";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DF30CC6B27B001AE00D665C7 /* Project object */;
 }
