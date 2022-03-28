@@ -15,7 +15,7 @@ struct AddChatView: View {
                 TextField("Title", text: $title)
                 TextField("Topic", text: $topic)
                 Picker("Max number of people", selection: $maxN) {
-                    ForEach(0..<maxNVars.count) {
+                    ForEach(0..<2) {
                         Text("\(maxNVars[$0])")
                     }
                 } .pickerStyle(.segmented)
