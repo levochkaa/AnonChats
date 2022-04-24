@@ -20,11 +20,11 @@ struct MainView: View {
                 Text("AnonChats")
                     .font(.system(size: 48, weight: .semibold, design: .rounded))
                     .multilineTextAlignment(.center)
-                Text("Hi! This app is made to find people for communication, while on the lockdown. Click a button below to proceed. Happy messaging!")
+                Text("Hi! This app is made to find people for communication. Click a button below to proceed. Happy messaging!")
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
                 Button(action: {
-                    self.showAuth.toggle()
+                    self.showAuth = true
                 }) {
                     Text("Sign in")
                         .font(.system(size: 25, weight: .semibold, design: .rounded))
@@ -39,7 +39,7 @@ struct MainView: View {
                         .environmentObject(firebase)
                 }
                 Button(action: {
-                    self.showReg.toggle()
+                    self.showReg = true
                 }) {
                     Text("Sign up")
                         .font(.system(size: 25, weight: .semibold, design: .rounded))
