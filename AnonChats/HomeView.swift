@@ -11,6 +11,7 @@ struct HomeView: View {
 
     init() {
         viewModel.fetchData()
+        userModel.fetchUser()
     }
 
     var body: some View {
